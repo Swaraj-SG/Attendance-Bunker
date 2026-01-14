@@ -10,6 +10,7 @@ from datetime import datetime
 #python-3.12
 #upload-2
 #final
+#edit on 14012026
 
 DATA_FILE = 'attendance_data.json'
 
@@ -90,6 +91,7 @@ root.title("📝 Attendance Tracker & Bunker")
 root.geometry("350x650")  
 root.resizable(False, False)
 #fixed size cause might later port in mobile
+#mobile port is to completed
 
 overall_frame = tk.Frame(root, pady=5)
 overall_frame.pack()
@@ -159,3 +161,5 @@ refresh_display()
 root.mainloop()
 
 #end of code :)
+#happy debugging :)
+
