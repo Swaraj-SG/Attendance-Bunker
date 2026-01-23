@@ -11,6 +11,7 @@ from datetime import datetime
 #upload-2
 #final
 #edit on 14012026
+#name changed to pc version cause of mobile port
 
 DATA_FILE = 'attendance_data.json'
 
@@ -162,4 +163,5 @@ root.mainloop()
 
 #end of code :)
 #happy debugging :)
+
 
