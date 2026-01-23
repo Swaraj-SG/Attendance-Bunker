@@ -1,3 +1,11 @@
-***About this app***
+## Attendance Bunker
 
-Attendence Bunker is a github project made for college students to track their attendence percent and keep a record for the 75% attendence rule laid by the University/College.
+This app helps a student to track his attendance and keep a record of it to maintain the 75% attendence rule.
+
+PC verion of the app is ready to download.
+
+Currently working on the Mobile Port of it ( *Will be available soon* 😊 )
+
+The source code of the app is available to see (source_code_pc.py)
+
+---
