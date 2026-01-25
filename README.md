@@ -1,6 +1,6 @@
 ## Attendance Bunker
 
-This app helps a student to track his attendance and keep a record of it to maintain the 75% attendence rule.
+This app help a student to track his attendance and keep a record of it to maintain the 75% attendence rule.
 
 PC verion of the app is ready to download.
 
