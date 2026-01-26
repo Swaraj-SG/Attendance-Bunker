@@ -1,167 +1,161 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
-import math
-import json
-import os
-import webbrowser
+from tkinter import messagebox
+import json, os, math
 from datetime import datetime
+#last edited on 26/1/26
 
-#swaraj-24052025
-#python-3.12
-#upload-2
-#final
-#edit on 14012026
-#name changed to pc version cause of mobile port
+APP_NAME = "Attendance Bunker"
+DATA_FILE = "attendance_data.json"
+TARGET = 75
 
-DATA_FILE = 'attendance_data.json'
+#data
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
 
-if os.path.exists(DATA_FILE):
-    with open(DATA_FILE, 'r') as f:
-        history = json.load(f)
-else:
-    history = []
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
 
-def get_cumulative():
-    total_sum = sum(item['total'] for item in history)
-    attended_sum = sum(item['attended'] for item in history)
-    percent = (attended_sum / total_sum) * 100 if total_sum > 0 else 0
-    return total_sum, attended_sum, percent
+data = load_data()
 
-def save_data():
-    with open(DATA_FILE, 'w') as f:
-        json.dump(history, f, indent=2)
-
-def pct_color(p):
-    return 'red' if p < 75 else 'green'
-
-def refresh_display():
-    tot_sum, att_sum, cum_perc = get_cumulative()
-    for row in overall_table.get_children():
-        overall_table.delete(row)
-    overall_table.insert('', 'end', values=(att_sum, tot_sum, f"{cum_perc:.2f}%"), tags=(pct_color(cum_perc),))
-
-    for row in history_table.get_children():
-        history_table.delete(row)
-    for item in history:
-        date = datetime.strptime(item['date'], '%Y-%m-%d').strftime('%d%m%Y')
-        tot = item['total']
-        att = item['attended']
-        perc = (att / tot) * 100
-        history_table.insert('', 'end', values=(date, att, tot, f"{perc:.2f}%"), tags=(pct_color(perc),))
-
-def calculate_percentage():
+#logic - it sucks man :(
+def calculate():
     try:
-        total = int(entry_total.get())
-        attended = int(entry_attended.get())
-        if total <= 0 or attended < 0 or attended > total:
-            raise ValueError
-    except ValueError:
-        messagebox.showerror("Input Error", "Enter valid integers: 0 ≤ attended ≤ total, total > 0.")
-        return
-    percent = (attended / total) * 100
-    label_today.config(text=f"Today: {percent:.2f}%", fg=pct_color(percent), font=('Arial', 14, 'bold'))
+        attended = attended_entry.get().strip()
+        total = total_entry.get().strip()
 
-    try:
-        N = int(entry_future.get())
-        if N < 0:
-            raise ValueError
-    except ValueError:
-        label_bunks.config(text="Enter valid future lectures.")
-        return
-    tot_sum, att_sum, _ = get_cumulative()
-    required = 0.75 * (tot_sum + total + N)
-    min_future = math.ceil(required - (att_sum + attended))
-    bunkable = max(0, N - min_future)
-    label_bunks.config(text=f"Can bunk {bunkable} lectures out of {N}")
+        if not attended or not total:
+            raise ValueError("Missing lecture data")
 
-def add_record():
-    try:
-        total = int(entry_total.get())
-        attended = int(entry_attended.get())
-    except ValueError:
-        messagebox.showerror("Save Error", "Calculate before saving.")
-        return
-    date_str = datetime.now().strftime('%Y-%m-%d')
-    history.append({'date': date_str, 'total': total, 'attended': attended})
-    save_data()
-    refresh_display()
-    messagebox.showinfo("Saved", "Record added.")
+        attended = int(attended)
+        total = int(total)
 
+        if attended > total or total <= 0:
+            raise ValueError("Invalid lecture values")
+
+        day = day_var.get()
+        month = month_var.get()
+        year = year_var.get()
+
+        if not day or not month or not year:
+            raise ValueError("Date not selected")
+
+        date_key = f"{year}-{month.zfill(2)}-{day.zfill(2)}"
+
+        if date_key in data:
+            raise ValueError("Attendance for this date already exists")
+
+        # Save date-wise data
+        data[date_key] = {
+            "attended": attended,
+            "total": total
+        }
+        save_data(data)
+
+        # Calculate totals
+        total_attended = sum(d["attended"] for d in data.values())
+        total_lectures = sum(d["total"] for d in data.values())
+
+        percent = round((total_attended / total_lectures) * 100, 2)
+
+        bunkable = math.floor((total_attended / (TARGET / 100)) - total_lectures)
+        bunkable = max(0, bunkable)
+
+        percent_value.config(text=f"{percent} %")
+        percent_value.config(fg="green" if percent >= TARGET else "red")
+        bunk_value.config(text=str(bunkable))
+
+        # Clear inputs
+        attended_entry.delete(0, tk.END)
+        total_entry.delete(0, tk.END)
+
+    except ValueError as e:
+        messagebox.showerror("Error", str(e))
+    except:
+        messagebox.showerror("Error", "Something went wrong")
+
+#gui
+#fixed app size
 root = tk.Tk()
-root.title("📝 Attendance Tracker & Bunker")
-root.geometry("350x650")  
+root.title(APP_NAME)
+root.geometry("500x650")
 root.resizable(False, False)
-#fixed size cause might later port in mobile
-#mobile port is to completed
+root.configure(bg="black")
 
-overall_frame = tk.Frame(root, pady=5)
-overall_frame.pack()
-cols_over = ('Attended', 'Total', '%')
-overall_table = ttk.Treeview(overall_frame, columns=cols_over, show='headings', height=1)
-for col in cols_over:
-    overall_table.heading(col, text=col)
-    overall_table.column(col, width=100, anchor='center')
-overall_table.pack()
-overall_table.tag_configure('red', foreground='red')
-overall_table.tag_configure('green', foreground='green')
+#header and title
+tk.Label(root, text="Attendance Bunker",
+         font=("Segoe UI", 26, "bold"),
+         fg="white", bg="black").place(x=40, y=30)
 
-inputs = tk.Frame(root, padx=10, pady=10)
-inputs.pack()
+tk.Label(root,
+         text="Made by - SwarajSG\nGitHub - https://github.com/Swaraj-SG",
+         font=("Segoe UI", 10),
+         fg="gray", bg="black", justify="left").place(x=40, y=85)
 
-tk.Label(inputs, text="Today's total lectures :").grid(row=0, column=0, padx=5, pady=5)
-entry_total = tk.Entry(inputs, width=5)
-entry_total.grid(row=0, column=1)
+#inputs
+tk.Label(root, text="Lectures attended today :",
+         font=("Segoe UI", 12),
+         fg="white", bg="black").place(x=40, y=150)
 
-tk.Label(inputs, text="Attended lectures today :").grid(row=1, column=0, padx=5, pady=5)
-entry_attended = tk.Entry(inputs, width=5)
-entry_attended.grid(row=1, column=1)
+attended_entry = tk.Entry(root, font=("Segoe UI", 12), width=10)
+attended_entry.place(x=300, y=150)
 
-tk.Label(inputs, text="Next day total lectures :").grid(row=2, column=0, padx=5, pady=5)
-entry_future = tk.Entry(inputs, width=5)
-entry_future.grid(row=2, column=1)
+tk.Label(root, text="Total number of lectures today :",
+         font=("Segoe UI", 12),
+         fg="white", bg="black").place(x=40, y=190)
 
-btn_frame = tk.Frame(root)
-btn_frame.pack(pady=5)
-btn_calc = tk.Button(btn_frame, text="Calculate", width=12, command=calculate_percentage)
-btn_calc.pack(side='left', padx=5)
-btn_save = tk.Button(btn_frame, text="Save Record", width=12, command=add_record)
-btn_save.pack(side='left', padx=5)
+total_entry = tk.Entry(root, font=("Segoe UI", 12), width=10)
+total_entry.place(x=300, y=190)
 
-label_today = tk.Label(root, text="Today: --%", font=('Arial', 14))
-label_today.pack(pady=5)
-label_bunks = tk.Label(root, text="Bunks Possible : --", font=('Arial', 12))
-label_bunks.pack(pady=5)
+#date entry
+tk.Label(root, text="Enter the date for the attendance :",
+         font=("Segoe UI", 12),
+         fg="white", bg="black").place(x=40, y=235)
 
-hist_frame = tk.Frame(root)
-hist_frame.pack(pady=5, fill='both', expand=True)
-cols_hist = ('Date', 'Attended', 'Total', '%')
-history_table = ttk.Treeview(hist_frame, columns=cols_hist, show='headings', height=8)
-for col in cols_hist:
-    history_table.heading(col, text=col)
-    history_table.column(col, anchor='center', width=70)
-history_table.pack(side='left', fill='both', expand=True)
-history_table.tag_configure('red', foreground='red')
-history_table.tag_configure('green', foreground='green')
+day_var = tk.StringVar()
+month_var = tk.StringVar()
+year_var = tk.StringVar()
 
-scroll = tk.Scrollbar(hist_frame, command=history_table.yview)
-history_table.configure(yscroll=scroll.set)
-scroll.pack(side='right', fill='y')
+tk.OptionMenu(root, day_var, *[str(i) for i in range(1, 32)]).place(x=40, y=270)
+tk.OptionMenu(root, month_var, *[str(i) for i in range(1, 13)]).place(x=120, y=270)
+tk.OptionMenu(root, year_var,
+              *[str(y) for y in range(2025, 2041)]).place(x=200, y=270)
 
-brand_frame = tk.Frame(root)
-brand_frame.pack(side='bottom', anchor='e', padx=5, pady=2)
-brand_label = tk.Label(brand_frame, text="Made by Swaraj -", font=('Arial', 8))
-brand_label.pack(side='left')
-brand_link = tk.Label(brand_frame, text="GitHub", fg="blue", cursor="hand2", font=('Arial', 8, 'underline'))
-brand_link.pack(side='left', padx=(2,0))
+tk.Label(root, text="date / month / year",
+         font=("Segoe UI", 9),
+         fg="gray", bg="black").place(x=40, y=305)
 
-def open_link(event):
-    webbrowser.open("https://github.com/Swaraj-SG")
-brand_link.bind("<Button-1>", open_link)
+#buttons
+tk.Button(root, text="Calculate",
+          font=("Segoe UI", 14),
+          width=18, bg="white", fg="blue",
+          relief="flat",
+          command=calculate).place(x=40, y=340)
 
-refresh_display()
+tk.Label(root, text="Calculated as per 75% attendance is mandatory",
+         font=("Segoe UI", 9),
+         fg="gray", bg="black").place(x=40, y=385)
+
+#output
+tk.Label(root, text="Attendance % :",
+         font=("Segoe UI", 14, "bold"),
+         fg="yellow", bg="black").place(x=40, y=435)
+
+percent_value = tk.Label(root, text="—",
+                         font=("Segoe UI", 14, "bold"),
+                         fg="white", bg="black")
+percent_value.place(x=200, y=435)
+
+tk.Label(root, text="Number of lectures you can bunk :",
+         font=("Segoe UI", 14, "bold"),
+         fg="orange", bg="black").place(x=40, y=485)
+
+bunk_value = tk.Label(root, text="—",
+                      font=("Segoe UI", 14, "bold"),
+                      fg="white", bg="black")
+bunk_value.place(x=380, y=485)
+
 root.mainloop()
-
-#end of code :)
-#happy debugging :)
-
-
