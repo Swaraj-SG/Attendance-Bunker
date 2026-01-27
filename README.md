@@ -10,3 +10,5 @@ Currently working on the Mobile Port of it ( *Will be available soon* 😊 )
 The source code of the app is available to see (source_code_pc.py)
 
 ---
+
+Any Bugs or Suggestions are welcome ! 😊
