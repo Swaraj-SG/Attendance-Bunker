@@ -29,7 +29,7 @@ Download and open the [Mobile APK Downloader.html](https://github.com/Swaraj-SG/
 
 **OR** 
 
-Just **[Click Here](https://drive.google.com/uc?export=download&id=16sMXWmMssNEjsiby6hb6qbVvQrFAv2z-)** to download the file directly from Google Drive.
+Just **[Click Here](https://drive.google.com/uc?export=download&id=16sMXWmMssNEjsiby6hb6qbVvQrFAv2z-)** to download the file directly from Google Drive. You can also click the link in the description of this repository.
 
 Install the application on your phone.
 
