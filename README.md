@@ -9,7 +9,7 @@ Calculated as per 75% attendance.
 
 ## PC Release
 
-Just download the **.exe** file and run it.
+Just download the **.exe** file and run it. (Download the latest release for better experience)
 
 If it prompts for security warnings, just give the permission to run, don't worry the app is safe to run 😊
 
