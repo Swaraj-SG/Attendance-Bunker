@@ -5,6 +5,8 @@ Calculated as per 75% attendance.
 
 *(The calculated number of bunks are the minimum bunks possible, actual number may vary and may be greater than the predicted one)*
 
+For detailed information, visit the website - [Attendance Bunker](https://swaraj-sg.github.io/Attendance-Bunker/)
+
 ---
 
 ## PC Release
@@ -24,8 +26,7 @@ Deleting the *.json* file will result in loss of attendance data.
 ## Mobile Release
 *Requires Android 13 or above to run the app.*
 
-Just **[Click Here](https://drive.google.com/uc?export=download&id=16sMXWmMssNEjsiby6hb6qbVvQrFAv2z-)** to download the file directly from Google Drive. You can also click the link in the description of this repository.
-
+Just **[Click Here](https://drive.google.com/uc?export=download&id=16sMXWmMssNEjsiby6hb6qbVvQrFAv2z-)** to download the file directly from Google Drive.
 **OR**
 
 Download and open the [Mobile APK Downloader.html](https://github.com/Swaraj-SG/Attendance-Bunker/blob/main/Mobile%20APK%20Downloader.html)
@@ -45,6 +46,4 @@ Any bugs or improvement suggestions are Welcome, just mail me 😊
 
 Email - *swarajsgurav@gmail.com*
 
----
-
-Check out my website for this - [Attendance Bunker](https://swaraj-sg.github.io/Attendance-Bunker/)
+Website - [Attendance Bunker](https://swaraj-sg.github.io/Attendance-Bunker/)
