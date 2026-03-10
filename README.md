@@ -27,6 +27,7 @@ Deleting the *.json* file will result in loss of attendance data.
 *Requires Android 13 or above to run the app.*
 
 Just **[Click Here](https://github.com/Swaraj-SG/Attendance-Bunker/raw/refs/heads/main/attendance_bunker_installer.apk)** to download the file directly.
+
 **OR**
 
 Download and run the [attendance_bunker.apk](attendance_bunker_installer.apk)
